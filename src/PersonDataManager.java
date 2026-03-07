@@ -30,26 +30,40 @@ public class PersonDataManager implements Cloneable {
 
     public int getSize() {return size;}
 
-    public void buildFromFile(String location) {
+    public boolean buildFromFile(String location) {
         try {
             //Create a File object with the file path
             File newfile = new File(location);
 
             //Create a scanner object to read from file
             Scanner sc = new Scanner(newfile);
-
+            //Skip reading the header of CSV
+            if(sc.hasNextLine()) {
+                sc.nextLine();
+            }
             //loop through each line in the file
             while(sc.hasNextLine()) {
+                if(size == people.length) {
+                    ensureCapacity(size * 2+1);
+                }
                 String line = sc.nextLine();
-                String [] data = line.split(",");
+                String [] data = line.split(",\\s*");
+
+                if(data.length < 5) continue;
+                String name = data[0].replace("\"","");
+                String gender = data[1].replace("\"","");
                 int new_age = Integer.parseInt(data[2]);
                 double new_height = Double.parseDouble(data[3]);
                 double new_weight = Double.parseDouble(data[4]);
-                Person p = new Person(data[0], data[1], new_age, new_height, new_weight);
+                Person p = new Person(name, gender, new_age, new_height, new_weight);
                 people[size] = p;
+                size++;
             }
+            sc.close();
+            return true;
         } catch (FileNotFoundException e) {
             System.out.println("File not found: " + location);
+            return false;
         }
     }
     //addPerson method

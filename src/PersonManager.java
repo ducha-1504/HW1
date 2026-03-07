@@ -19,19 +19,24 @@ public class PersonManager {
             menu = sc.next();
             switch (menu.toUpperCase()) {
                 case "I":
-                    System.out.println("Enter file name: ");
-                    filename = sc.next();
-                    if(!filename.toLowerCase().endsWith(".csv")) {
-                        System.out.println("Invalid file name. Try again");
-                        continue;
+                    while (true) {
+                        System.out.println("Enter file name: ");
+                        filename = sc.next();
+                        if (!filename.toLowerCase().endsWith(".csv")) {
+                            System.out.println("Invalid file name. Try again");
+                            continue;
+                        }
+                        if(manager.buildFromFile(filename)) {
+                            System.out.println("File has been built");
+                            break;
+                        }
+                        else {
+                            System.out.println("File does not exist. Try again");
+                        }
                     }
-                    try {
-                        manager.buildFromFile(filename);
-                        System.out.println("File imported successfully");
-                    } catch (FileNotFoundException e) {
-                        System.out.println("File not found");
-                    }
-                    break;
+                break;
+                case "A":
+
             }
         }
     }
