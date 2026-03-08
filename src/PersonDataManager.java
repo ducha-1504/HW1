@@ -4,11 +4,13 @@ import java.util.Scanner;//Using Scanner to read Files
 public class PersonDataManager implements Cloneable {
     private Person[] people;
     private int size;
+
     public PersonDataManager() {
         people = new Person[10];
         size = 0;
     }
-    public int getCapacity(){
+
+    public int getCapacity() {
         return people.length;
     }
 
@@ -28,7 +30,9 @@ public class PersonDataManager implements Cloneable {
         }
     }
 
-    public int getSize() {return size;}
+    public int getSize() {
+        return size;
+    }
 
     public boolean buildFromFile(String location) {
         try {
@@ -38,20 +42,20 @@ public class PersonDataManager implements Cloneable {
             //Create a scanner object to read from file
             Scanner sc = new Scanner(newfile);
             //Skip reading the header of CSV
-            if(sc.hasNextLine()) {
+            if (sc.hasNextLine()) {
                 sc.nextLine();
             }
             //loop through each line in the file
-            while(sc.hasNextLine()) {
-                if(size == people.length) {
-                    ensureCapacity(size * 2+1);
+            while (sc.hasNextLine()) {
+                if (size == people.length) {
+                    ensureCapacity(size * 2 + 1);
                 }
                 String line = sc.nextLine();
-                String [] data = line.split(",\\s*");
+                String[] data = line.split(",\\s*");
 
-                if(data.length < 5) continue;
-                String name = data[0].replace("\"","");
-                String gender = data[1].replace("\"","");
+                if (data.length < 5) continue;
+                String name = data[0].replace("\"", "");
+                String gender = data[1].replace("\"", "");
                 int new_age = Integer.parseInt(data[2]);
                 double new_height = Double.parseDouble(data[3]);
                 double new_weight = Double.parseDouble(data[4]);
@@ -66,50 +70,61 @@ public class PersonDataManager implements Cloneable {
             return false;
         }
     }
+
     //addPerson method
     //If the person already appears, by checking if there is the same name, weight,..., throws PersonAlreadyExistsException
-    public void addPerson(Person newPerson) throws PersonAlreadyExistsException {
-        for (int i = 0; i < size; i++){
+    public boolean addPerson(Person newPerson) throws PersonAlreadyExistsException {
+        for (int i = 0; i < size; i++) {
             if (people[i].getName().equalsIgnoreCase(newPerson.getName()) && people[i].getAge() == newPerson.getAge()
-            && people[i].getWeight() == newPerson.getWeight() && people[i].getHeight() == newPerson.getHeight()
-            && people[i].getGender().equalsIgnoreCase(newPerson.getGender())) {
+                    && people[i].getWeight() == newPerson.getWeight() && people[i].getHeight() == newPerson.getHeight()
+                    && people[i].getGender().equalsIgnoreCase(newPerson.getGender())) {
                 throw new PersonAlreadyExistsException("Person Already Exists");
             }
         }
-        if(people.length == size) {
-            ensureCapacity(size * 2+1);
+        if (people.length == size) {
+            ensureCapacity(size * 2 + 1);
         }
         people[size] = newPerson;
         size++;
+        return true;
     }
+
     //getPerson method.
     //if person does not exist, throw PersonDoesNotExistException
-    public Person getPerson(String name) throws PersonDoesNotExistException{
+    public String getPerson(String name) throws PersonDoesNotExistException {
         for (int i = 0; i < size; i++) {
             if (name.equalsIgnoreCase(people[i].getName()))
-                return people[i];
+                return people[i].toString();
         }
         throw new PersonDoesNotExistException("Person Does Not Exist");
     }
+
     public boolean removePerson(String name) throws PersonDoesNotExistException {
         int index = 0;
         while ((index < size) && !(people[index].getName().equalsIgnoreCase(name)))
             index++;
         if (index == size) {
-                throw new PersonDoesNotExistException("Person Does Not Exist");
+            throw new PersonDoesNotExistException("Person Does Not Exist");
         } else {
-                size--;
-                people[index] = people[size];
-                return true;
+            size--;
+            people[index] = people[size];
+            return true;
         }
     }
-    public void printTable(){
-            for (int i = 0; i < size; i++) {
-                people[i].toString();
+
+    public String printTable() {
+        String s = new String();
+        for (int i = 0; i < size; i++) {
+            s += people[i].getName() + " " + people[i].getGender() + " " +
+                    people[i].getAge() + " " + people[i].getHeight() + " " +
+                    people[i].getWeight() + "\n";
         }
+        return s;
     }
-    public void savetoFile(String filename){
+
+    public void savetoFile(String filename) throws IOException {
         try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename));) {
+            bw.write("Name" + "," + "Gender" + "," + "Age" + "," + "Height" + "," + "Weight" + "\n");
             for (int i = 0; i < size; i++) {
                 bw.write(people[i].getName() + "," +
                         people[i].getGender() + "," +
@@ -118,9 +133,7 @@ public class PersonDataManager implements Cloneable {
                         people[i].getWeight());
                 bw.newLine();
             }
-            System.out.println("Saved successfully to " + filename);
-        } catch(IOException e) {
-            System.out.println("Error Saving File");
+
         }
     }
 }
