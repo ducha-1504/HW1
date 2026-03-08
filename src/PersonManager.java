@@ -66,6 +66,8 @@ public class PersonManager {
                         sc.next();
                         break;
                         }
+
+                        //Check if person already exist or will be added successfully.
                         try {
                             manager.addPerson(p);
                             System.out.println("Person has been added");
@@ -76,6 +78,7 @@ public class PersonManager {
                 case "R":
                     System.out.println("Please type person you want to remove: ");
                     String remove_name = sc.next();
+                    //The dataset that using to train have an uppercase letter. So, check if the name is uppercase and appropriate
                     char[] charArray = remove_name.toCharArray();
                     if(!Character.isUpperCase(charArray[0])) {
                         System.out.println("Invalid person name. Try again with uppercase first letter");
@@ -103,6 +106,8 @@ public class PersonManager {
                 case "S":
                     System.out.println("Enter the name of the file you want to save (end with csv): ");
                     String save_name = sc.next();
+
+                    //Check if the file name using to save is ending csv or not. If not, new file name.
                     if (!save_name.toLowerCase().endsWith(".csv")) {
                         System.out.println("Invalid file name. Try again");
                         continue;
@@ -118,4 +123,3 @@ public class PersonManager {
         }
     }
 }
-

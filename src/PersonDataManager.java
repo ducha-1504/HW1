@@ -1,15 +1,18 @@
 import java.io.*;
 import java.util.Scanner;//Using Scanner to read Files
 
-public class PersonDataManager implements Cloneable {
+public class PersonDataManager {
+    //2 private data fields
     private Person[] people;
     private int size;
 
+    //No-argument constructor
     public PersonDataManager() {
         people = new Person[10];
         size = 0;
     }
 
+    //getCapacity method
     public int getCapacity() {
         return people.length;
     }
@@ -21,6 +24,7 @@ public class PersonDataManager implements Cloneable {
         people = new Person[initialCapacity];
     }
 
+    //ensureCapacity of a bag
     public void ensureCapacity(int minCapacity) {
         Person[] temp_people;
         if (people.length < minCapacity) {
@@ -34,6 +38,7 @@ public class PersonDataManager implements Cloneable {
         return size;
     }
 
+    //importing csv file then save it on people[] person
     public boolean buildFromFile(String location) {
         try {
             //Create a File object with the file path
@@ -81,6 +86,7 @@ public class PersonDataManager implements Cloneable {
                 throw new PersonAlreadyExistsException("Person Already Exists");
             }
         }
+        //if capacity is small, resizing the bag
         if (people.length == size) {
             ensureCapacity(size * 2 + 1);
         }
@@ -92,13 +98,13 @@ public class PersonDataManager implements Cloneable {
     //getPerson method.
     //if person does not exist, throw PersonDoesNotExistException
     public String getPerson(String name) throws PersonDoesNotExistException {
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < size; i++)
             if (name.equalsIgnoreCase(people[i].getName()))
                 return people[i].toString();
-        }
         throw new PersonDoesNotExistException("Person Does Not Exist");
     }
 
+    //Remove person with given name. If name is removed, the last person on the bag is moved to the empty location
     public boolean removePerson(String name) throws PersonDoesNotExistException {
         int index = 0;
         while ((index < size) && !(people[index].getName().equalsIgnoreCase(name)))
@@ -111,7 +117,7 @@ public class PersonDataManager implements Cloneable {
             return true;
         }
     }
-
+    //Print Table of Data
     public String printTable() {
         String s = new String();
         for (int i = 0; i < size; i++) {
@@ -121,9 +127,9 @@ public class PersonDataManager implements Cloneable {
         }
         return s;
     }
-
+    //Save to File with Header.
     public void savetoFile(String filename) throws IOException {
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename));) {
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(filename))) {
             bw.write("Name" + "," + "Gender" + "," + "Age" + "," + "Height" + "," + "Weight" + "\n");
             for (int i = 0; i < size; i++) {
                 bw.write(people[i].getName() + "," +
